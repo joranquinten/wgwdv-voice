@@ -4,7 +4,8 @@
   "description": "Webhook for retrieving suggestions for wgwdv from Contentful CMS",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon node index.js",
+    "dev": "nodemon node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

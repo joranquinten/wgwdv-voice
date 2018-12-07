@@ -1,1 +1,15 @@
-{}
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "*.js",
+      "use": "@now/node-server"
+    }
+  ],
+  "build": {
+    "env": {
+      "ctf_space_id": "qq4tv24jl3y7",
+      "ctf_cda_token": "15e8933ab8e00c83328ea246f56a620c0df5f9a309d6683a98912071b0107bcb"
+    }
+  }
+}
