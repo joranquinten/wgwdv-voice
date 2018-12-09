@@ -1,9 +1,10 @@
 if (!process.env.now) require("dotenv").config();
 
 const express = require("express");
-var helmet = require("helmet");
-
 const app = express();
+const helmet = require("helmet");
+const fetch = require("node-fetch");
+
 const port = process.env.now ? 8080 : 4000;
 
 app.use(helmet());
@@ -36,6 +37,23 @@ const fulfillmentTemplate = require("./utils/fulfillment-template");
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
 
+async function getWeather() {
+  const config = {
+    secret: process.env.darksky_secret,
+    location: "52.238,5.5346",
+    lang: "nl",
+    units: "si",
+    exclude: "minutely,hourly,daily,alerts,flags"
+  };
+
+  const weatherAPI = `https://api.darksky.net/forecast/${config.secret}/${
+    config.location
+  }?lang=${config.lang}&units=${config.units}&exclude=${config.exclude}`;
+
+  const response = await fetch(weatherAPI);
+  return response.json();
+}
+
 async function getSuggestion() {
   const requestQuery = {
     content_type: "suggestie"
@@ -56,17 +74,16 @@ printSuggestion = function(req, res) {
     const randomSuggestion = suggestions.items[getRandomInt(0, count)];
     const { title } = randomSuggestion.fields;
 
-    res
-      .status(200)
-      .json(fulfillmentTemplate.getTemplate("Ik heb een idee!", title));
+    res.json(fulfillmentTemplate.getTemplate("Ik heb een idee!", title));
   });
 };
 
 app.post("/", (req, res) => {
   const token = req.headers["wgwdv-secret"];
-  if (token !== process.env.wgwdv_secret)
-    return res.status(401).send({ auth: false, message: "No token provided." });
-
+  if (!token || token !== process.env.wgwdv_secret)
+    return res
+      .status(401)
+      .send({ auth: false, message: "No token or incorrect token provided." });
   printSuggestion(req, res);
 });
 
@@ -74,11 +91,12 @@ if (!process.env.now) {
   app.get("/", (req, res) => {
     printSuggestion(req, res);
   });
+
+  app.get("/weather", (req, res) => {
+    getWeather().then(weatherReport =>{
+      res.json(weatherReport);
+    });
+  });
 }
 
-const server = app.listen(port, () => {
-  if (!process.env.now) {
-    const port = server.address().port;
-    console.log("Example app listening at http://localhost:%s", port);
-  }
-});
+app.listen(port);

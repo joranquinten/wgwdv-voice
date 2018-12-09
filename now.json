@@ -10,7 +10,8 @@
     "env": {
       "ctf_space_id": "@ctf_space_id",
       "ctf_cda_token": "@ctf_cda_token",
-      "wgwdv_secret": "@wgwdv_secret"
+      "wgwdv_secret": "@wgwdv_secret",
+      "darksky_secret": "@darksky_secret"
     }
   }
 }
