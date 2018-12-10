@@ -1,10 +1,11 @@
 const contentful = require("./contentful");
 const fulfillmentTemplate = require("./fulfillment-template");
+const weather = require("./get-weather");
 
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
 
-async function getSuggestion() {
+async function getSuggestions() {
   const requestQuery = {
     content_type: "suggestie"
   };
@@ -16,11 +17,22 @@ async function getSuggestion() {
   }
 }
 
-printSuggestion = function(req, res) {
-  getSuggestion().then(suggestions => {
-    // get a random entry
-    const count = suggestions.total;
+async function matchSuggestions(req, res) {
+  weather.getWeather().then(weatherReport => {
+    return suggestions;
+  });
+}
 
+printSuggestion = function(req, res) {
+  getSuggestions().then(suggestions => {
+    // Filter by weather
+    weather.getWeatherType().then(weatherType => {
+      console.log('>',weatherType);
+      // Use the weathertype ID to retrieve matches from suggestions (or none)
+    });
+
+    // Get a random entry from the result
+    const count = suggestions.total;
     const randomSuggestion = suggestions.items[getRandomInt(0, count)];
     const { title } = randomSuggestion.fields;
 
@@ -28,5 +40,5 @@ printSuggestion = function(req, res) {
   });
 };
 
-module.exports.getSuggestion = getSuggestion;
+module.exports.getSuggestions = getSuggestions;
 module.exports.printSuggestion = printSuggestion;

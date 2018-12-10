@@ -4,6 +4,10 @@ const express = require("express");
 const app = express();
 const helmet = require("helmet");
 
+// Example deep log objects
+// const util = require("util");
+// console.log(util.inspect(response, { showHidden: false, depth: null }));
+
 // internal tooling
 const errorHandler = require("./utils/error-handlers");
 const suggestion = require("./utils/suggestion");
