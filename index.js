@@ -38,6 +38,12 @@ if (!process.env.now) {
       res.json(weatherReport);
     });
   });
+
+  app.get("/weather/types", (req, res) => {
+    weather.getWeatherTypes().then(getWeatherTypes => {
+      res.json(getWeatherTypes);
+    });
+  });
 }
 
 app.listen(port);

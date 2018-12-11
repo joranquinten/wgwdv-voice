@@ -27,7 +27,7 @@ printSuggestion = function(req, res) {
   getSuggestions().then(suggestions => {
     // Filter by weather
     weather.getWeatherType().then(weatherType => {
-      console.log('>',weatherType);
+      console.log(">", weatherType);
       // Use the weathertype ID to retrieve matches from suggestions (or none)
     });
 
