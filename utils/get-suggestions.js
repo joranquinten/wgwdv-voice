@@ -3,6 +3,7 @@ const getRandomInt = (min, max) =>
 
 const printSuggestion = function(req, res) {
   getAllSuggestions().then(suggestions => {
+
     // get a random entry
     const count = suggestions.total;
     console.log(suggestions)

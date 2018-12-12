@@ -6,6 +6,10 @@ var helmet = require("helmet");
 const app = express();
 const port = process.env.now ? 8080 : 4000;
 
+const isBefore = require("date-fns/is_before");
+const isAfter = require("date-fns/is_after");
+const isEqual = require("date-fns/is_equal");
+
 app.use(helmet());
 app.use(clientErrorHandler);
 app.use(errorHandler);
@@ -22,6 +26,8 @@ function errorHandler(err, req, res, next) {
   res.status(500);
   res.render("error", { error: err });
 }
+
+const DateFns = require('./utils/date-fns');
 
 const contentful = require("contentful");
 const client = contentful.createClient({
@@ -51,9 +57,31 @@ async function getSuggestion() {
 printSuggestion = function(req, res) {
   getSuggestion().then(suggestions => {
     // get a random entry
-    const count = suggestions.total;
+    const getDateField = DateFns.getDateField;
 
-    const randomSuggestion = suggestions.items[getRandomInt(0, count)];
+    // filter dates
+    const filteredByDate = (suggestions.items || []).reduce(
+      (filtered, suggestion) => {
+        const today = new Date();
+
+        const startDate = getDateField(suggestion, "startDate");
+        const stopDate = getDateField(suggestion, "stopDate");
+
+        if (
+          (isBefore(startDate, today) || isEqual(startDate, today)) &&
+          (isAfter(stopDate, today) || isEqual(stopDate, today))
+        ) {
+          return [...filtered, suggestion];
+        }
+
+        return filtered;
+      },
+      []
+    );
+
+    const count = filteredByDate.length;
+
+    const randomSuggestion = filteredByDate[getRandomInt(0, count)];
     const { title } = randomSuggestion.fields;
 
     res
