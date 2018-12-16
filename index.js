@@ -8,6 +8,7 @@ const tokenProtected = require("./middleware/token-protected");
 
 const Contentful = require("./content/contentful");
 const Fulfillment = require("./utils/fulfillment");
+const Weather = require("./content/weather");
 
 const app = express();
 const port = process.env.now ? 8080 : 4000;
@@ -18,14 +19,22 @@ app.use(helmet());
 //app.use("/webhook", tokenProtected.validateWebhookSecret);
 
 app.post("/", tokenProtected.validateWebhookSecret, async (req, res) => {
-  const suggestion = await Contentful.getRandomSuggestion();
+  const weatherType = await Weather.getWeatherType();
+  const suggestion = await Contentful.getRandomSuggestion(weatherType);
   res.json(Fulfillment.getTemplate("Ik heb een idee!", suggestion.title));
 });
 
 if (process.env.NODE_ENV !== "production") {
   app.get("/", async (req, res) => {
-    const suggestion = await Contentful.getRandomSuggestion();
+    const weatherType = await Weather.getWeatherType();
+    const suggestion = await Contentful.getRandomSuggestion(weatherType);
     res.json(Fulfillment.getTemplate("Ik heb een idee!", suggestion.title));
+  });
+  app.get("/weather", async (req, res) => {
+    const dailyReport = await Weather.getWeather();
+    const weatherTypes = await Contentful.getWeatherTypes();
+    const weatherType = await Weather.getWeatherType();
+    res.json({ dailyReport, weatherTypes, weatherType });
   });
 }
 

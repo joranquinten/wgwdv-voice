@@ -6,7 +6,6 @@ const printSuggestion = function(req, res) {
 
     // get a random entry
     const count = suggestions.total;
-    // console.log(suggestions)
     const randomSuggestion = suggestions.items[getRandomInt(0, count)];
     const { title } = randomSuggestion.fields;
 
