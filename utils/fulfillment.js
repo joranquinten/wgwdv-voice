@@ -1,5 +1,16 @@
+const getRandomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+
+const goodbyeMessage = [
+  "Veel plezier! Komen jullie nog een keertje terug?",
+  "Veel plezier en tot ziens!",
+  "Veel plezier! Doei!",
+  "Veel plezier en misschien tot snel?",
+  "Veel plezier! Zie ik jullie morgen weer?"
+];
+
 const FulfillmentTemplate = {
-  getTemplate(title, response) {
+  getTemplate(title, response, additionalInfo) {
     return {
       fulfillmentText: response,
       fulfillmentMessages: [
@@ -18,7 +29,7 @@ const FulfillmentTemplate = {
             items: [
               {
                 simpleResponse: {
-                  textToSpeech: response
+                  textToSpeech: `${response} ${goodbyeMessage[getRandomInt(0, goodbyeMessage.length - 1)]}`
                 }
               }
             ]
@@ -27,5 +38,5 @@ const FulfillmentTemplate = {
       }
     };
   }
-}
+};
 module.exports = FulfillmentTemplate;
