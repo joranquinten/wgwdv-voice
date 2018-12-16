@@ -1,5 +1,5 @@
-module.exports = {
-  getTemplate: function(title, response) {
+const FulfillmentTemplate = {
+  getTemplate(title, response) {
     return {
       fulfillmentText: response,
       fulfillmentMessages: [
@@ -27,4 +27,5 @@ module.exports = {
       }
     };
   }
-};
+}
+module.exports = FulfillmentTemplate;

@@ -1,5 +1,6 @@
 const setYear = require("date-fns/set_year");
 const parse = require("date-fns/parse");
+const format = require("date-fns/format");
 
 const dateThisYear = someDate => {
   const today = new Date();
@@ -11,9 +12,9 @@ const dateThisYear = someDate => {
 
 const DateFns = {
   getDateField(suggestion, reference) {
-    return suggestion.fields[reference]
-      ? dateThisYear(parse(suggestion.fields[reference]))
-      : new Date();
+    return suggestion[reference]
+      ? format(dateThisYear(parse(suggestion[reference])), "YYYY-MM-DD")
+      : format(new Date(), "YYYY-MM-DD");
   }
 };
 
