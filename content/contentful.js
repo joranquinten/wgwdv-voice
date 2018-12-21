@@ -4,7 +4,9 @@ const NodeCache = require("node-cache");
 const isBefore = require("date-fns/is_before");
 const isAfter = require("date-fns/is_after");
 const isEqual = require("date-fns/is_equal");
+const addYears = require("date-fns/add_years");
 const format = require("date-fns/format");
+const parse = require("date-fns/parse");
 
 const DateFns = require("../utils/date-fns");
 
@@ -34,16 +36,23 @@ const formatItemsResponse = items =>
     ...item.fields
   }));
 
-const dateFilter = items => {
-  return (items || []).filter(item => {
-    const startDate = getDateField(item, "startDate");
-    const stopDate = getDateField(item, "stopDate");
+const dateFilter = items =>
+  (items || []).filter(item => {
+    let startDate = parse(getDateField(today, item, "startDate"));
+    let stopDate = parse(getDateField(today, item, "stopDate"));
+    if (isBefore(stopDate, startDate)) {
+      if (isBefore(today, startDate)) {
+        startDate = addYears(startDate, -1);
+      } else {
+        stopDate = addYears(stopDate, 1);
+      }
+    }
+
     return (
       (isBefore(startDate, today) || isEqual(startDate, today)) &&
       (isAfter(stopDate, today) || isEqual(stopDate, today))
     );
   });
-};
 
 const weatherFilter = (items, weatherType) => {
   const filteredByWeather = items.reduce((collection, item) => {
@@ -87,6 +96,7 @@ const Contentful = {
   },
   filterSuggestions(items, weatherType) {
     let filtered;
+    const today = new Date();
     filtered = dateFilter(items);
     filtered = weatherFilter(filtered, weatherType);
     return filtered;
