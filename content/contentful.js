@@ -4,6 +4,7 @@ const NodeCache = require("node-cache");
 const isBefore = require("date-fns/is_before");
 const isAfter = require("date-fns/is_after");
 const isEqual = require("date-fns/is_equal");
+const addDays = require("date-fns/add_days");
 const addYears = require("date-fns/add_years");
 const format = require("date-fns/format");
 const parse = require("date-fns/parse");
@@ -25,8 +26,6 @@ const cacheOpts = {
 
 const getDateField = DateFns.getDateField;
 
-const today = format(new Date(), "YYYY-MM-DD");
-
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
 
@@ -36,10 +35,10 @@ const formatItemsResponse = items =>
     ...item.fields
   }));
 
-const dateFilter = items =>
+const dateFilter = (today, items) =>
   (items || []).filter(item => {
-    let startDate = parse(getDateField(today, item, "startDate"));
-    let stopDate = parse(getDateField(today, item, "stopDate"));
+    let startDate = parse(getDateField(item, "startDate"));
+    let stopDate = addDays(parse(getDateField(item, "stopDate")), 1);
     if (isBefore(stopDate, startDate)) {
       if (isBefore(today, startDate)) {
         startDate = addYears(startDate, -1);
@@ -97,13 +96,16 @@ const Contentful = {
   filterSuggestions(items, weatherType) {
     let filtered;
     const today = new Date();
-    filtered = dateFilter(items);
+    filtered = dateFilter(today, items);
     filtered = weatherFilter(filtered, weatherType);
     return filtered;
   },
   async getRandomSuggestion(weatherType) {
     return await Contentful.getAllSuggestions().then(items => {
-      const filtered = Contentful.filterSuggestions(items, weatherType);
+      const filtered = Contentful.filterSuggestions(
+        items,
+        weatherType
+      );
       const randomInt = getRandomInt(0, filtered.length - 1);
       const randomItem = filtered[randomInt].item;
       return randomItem;
