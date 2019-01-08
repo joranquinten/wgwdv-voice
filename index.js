@@ -30,12 +30,6 @@ if (process.env.NODE_ENV !== "production") {
     const suggestion = await Contentful.getRandomSuggestion(weatherType);
     res.json(Fulfillment.getTemplate("Ik heb een idee!", suggestion.title));
   });
-  app.get("/weather", async (req, res) => {
-    const dailyReport = await Weather.getWeather();
-    const weatherTypes = await Contentful.getWeatherTypes();
-    const weatherType = await Weather.getWeatherType();
-    res.json({ dailyReport, weatherTypes, weatherType });
-  });
 }
 
 app.use(errorHandler.clientErrorHandler);

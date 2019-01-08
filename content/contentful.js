@@ -110,28 +110,6 @@ const Contentful = {
       const randomItem = filtered[randomInt].item;
       return randomItem;
     });
-  },
-  async getWeatherTypes() {
-    const cachedResponse = contentfulCache.get(cacheOpts.key[1]);
-    if (cachedResponse === undefined) {
-      const requestQuery = {
-        content_type: "temperatuur"
-      };
-
-      try {
-        const response = await client.getEntries(requestQuery);
-        const weatherTypes = formatItemsResponse(response.items).map(item => ({
-          ...item,
-          kansOpNeerslagPercentage: (item.kansOpNeerslag * 20) / 100
-        }));
-        contentfulCache.set(cacheOpts.key[1], weatherTypes, cacheOpts.ttl);
-        return weatherTypes;
-      } catch (error) {
-        return error;
-      }
-    } else {
-      return cachedResponse;
-    }
   }
 };
 
