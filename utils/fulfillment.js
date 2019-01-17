@@ -11,13 +11,18 @@ const goodbyeMessage = [
 
 const FulfillmentTemplate = {
   getTemplate(title, response, additionalInfo) {
+    let reply = response;
+    if (additionalInfo.weatherTitle) {
+      reply = `Het is "${additionalInfo.weatherTitle}". ${response}`;
+    }
+
     return {
-      fulfillmentText: response,
+      fulfillmentText: reply,
       fulfillmentMessages: [
         {
           card: {
             title: title,
-            subtitle: response
+            subtitle: reply
           }
         }
       ],
@@ -29,7 +34,9 @@ const FulfillmentTemplate = {
             items: [
               {
                 simpleResponse: {
-                  textToSpeech: `${response} ${goodbyeMessage[getRandomInt(0, goodbyeMessage.length - 1)]}`
+                  textToSpeech: `${reply} ${
+                    goodbyeMessage[getRandomInt(0, goodbyeMessage.length - 1)]
+                  }`
                 }
               }
             ]

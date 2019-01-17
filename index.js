@@ -21,14 +21,23 @@ app.use(helmet());
 app.post("/", tokenProtected.validateWebhookSecret, async (req, res) => {
   const weatherType = await Weather.getWeatherType();
   const suggestion = await Contentful.getRandomSuggestion(weatherType);
-  res.json(Fulfillment.getTemplate("Ik heb een idee!", suggestion.title));
+  res.json(Fulfillment.getTemplate(
+    "Ik heb een idee!",
+    suggestion.title,
+    { weatherTitle: weatherType.title }
+  ));
 });
 
 if (process.env.NODE_ENV !== "production") {
   app.get("/", async (req, res) => {
     const weatherType = await Weather.getWeatherType();
+    console.log(weatherType);
     const suggestion = await Contentful.getRandomSuggestion(weatherType);
-    res.json(Fulfillment.getTemplate("Ik heb een idee!", suggestion.title));
+    res.json(Fulfillment.getTemplate(
+      "Ik heb een idee!",
+      suggestion.title,
+      { weatherTitle: weatherType.title }
+    ));
   });
 }
 

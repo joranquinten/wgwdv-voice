@@ -11,7 +11,7 @@ const cacheOpts = {
 
 const Weather = {
   getWeatherAPI() {
-    return "https://wgwdv-api.watzalikdoenvandaag.nl/api/weather";
+    return "https://api.doenvandaag.nl/api/weather";
   },
   async weatherAPICall() {
     const weatherAPI = Weather.getWeatherAPI();
